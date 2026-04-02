@@ -4,14 +4,14 @@ from django.conf import settings
 # Create your views here.
 
 # insights/views.py
-
+#LATER INSIGHT GIVE tag records feature
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView,ListAPIView, DestroyAPIView
 from .models import Insight
 from .serializers import InsightSerializer
 
 
 
-###users only inighns by analyst
+###users only inighTs by analyst
 class MyInsightsView(ListAPIView):
     serializer_class = InsightSerializer
 

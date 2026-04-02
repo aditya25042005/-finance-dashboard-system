@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import SummaryView, CategoryBreakdownView, TrendView
+from .views import *
 
 urlpatterns = [
-    path('dashboard/summary/', SummaryView.as_view()),
-    path('dashboard/category-breakdown/', CategoryBreakdownView.as_view()),
-    path('dashboard/trends/', TrendView.as_view()),
+    path('summary/', SummaryView.as_view()),
+    path('category_filter/', CategoryView.as_view()),
+    path('trends/', TrendView.as_view()),
 ]

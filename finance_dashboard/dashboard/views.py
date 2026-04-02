@@ -14,7 +14,7 @@ from .serializers import (
     TrendSerializer
 )
 
-
+##recent activity
 class SummaryView(APIView):
 
     def post(self, request):
@@ -47,7 +47,7 @@ class SummaryView(APIView):
         return Response(SummaryResponseSerializer(response_data).data)
 
 
-class CategoryBreakdownView(APIView):
+class CategoryView(APIView):
 
     def get(self, request):
         queryset = Record.objects.all()
@@ -62,7 +62,7 @@ class CategoryBreakdownView(APIView):
 
 
 class TrendView(APIView):
-
+##MOTH ABC
     def get(self, request):
         months = int(request.query_params.get("months", 6))
         ##edges case  24
@@ -80,7 +80,7 @@ class TrendView(APIView):
 
         formatted = [
             {
-                "month": row["month"].date(),
+                "month": row["month"].strftime("%b %Y"),
                 "type": row["type"],
                 "total": row["total"],
             }
@@ -88,3 +88,11 @@ class TrendView(APIView):
         ]
 
         return Response(TrendSerializer(formatted, many=True).data)
+    
+
+
+
+    ##API FOR CATEGORY AND TYPE FILTER
+
+    #Monthly or weekly trends
+#error handling and logging for wrong data type 

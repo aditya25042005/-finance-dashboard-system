@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView,UpdateAPIView,DestroyAPIView
 from .serializer import *
+from rest_framework.exceptions import NotFound, APIException
+from rest_framework.response import Response
+from users.models import User
+
 # Create your views here.
 
 
@@ -8,18 +12,36 @@ class RecordCreateAPIView(CreateAPIView):
     queryset = Record.objects.all()
     serializer_class = RecordSerializer
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+      try:
+        ##demo
+        user=User.objects.get(username='adityakarn')
+        serializer.save(created_by=user)
+      except Exception as e:
+         print(str(e))
+         raise APIException("Something went wrong", str(e))
+
+          
+   
+
 
 class RecordRetrieveAPIView(RetrieveAPIView):
-    queryset = Record.objects.select_related("user").all()
+    ##solved N+1 QUERY PROBLEM 
+    queryset = Record.objects.select_related("created_by").all()
     serializer_class = RecordSerializer
-
+    ### do ultimate error handling
+    
+  #  http://127.0.0.1:8000/records/view/dd
+   
+   # then ultimate error handling
 
 
 class RecordUpdateAPIView(UpdateAPIView):
     queryset = Record.objects.all()
     def perform_update(self, serializer):
-        serializer.save(updated_by=self.request.user)
+      
+      user=User.objects.get(username='adityakarn')
+
+      serializer.save(updated_by=user)
 
     serializer_class = RecordSerializer
 

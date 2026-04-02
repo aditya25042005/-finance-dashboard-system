@@ -2,15 +2,12 @@ from django.shortcuts import render
 from .models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from .pagination import UserPagination
 from .serializers import UserSerializer
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView,UpdateAPIView,DestroyAPIView
 
-# Create your views here.
 
-
-
-#creating user
+#create user
 class UserCreateView(APIView):
     def post(self,request):
       try:
@@ -29,6 +26,8 @@ class UserCreateView(APIView):
 class UserListView(ListAPIView):
     queryset=User.objects.all()
     serializer_class=UserSerializer
+    pagination_class = UserPagination
+
 
 #each user view
 class userDetailView(RetrieveAPIView):
