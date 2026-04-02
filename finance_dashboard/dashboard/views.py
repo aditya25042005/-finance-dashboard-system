@@ -13,9 +13,11 @@ from .serializers import (
     CategoryBreakdownSerializer,
     TrendSerializer
 )
-
+from users.permissions import *
 ##recent activity
+
 class SummaryView(APIView):
+    permission_classes = [Viewer_Analyst_Admin]
 
     def post(self, request):
         serializer = SummaryRequestSerializer(data=request.data)
@@ -48,6 +50,7 @@ class SummaryView(APIView):
 
 
 class CategoryView(APIView):
+    permission_classes = [Viewer_Analyst_Admin]
 
     def get(self, request):
         queryset = Record.objects.all()
@@ -62,7 +65,8 @@ class CategoryView(APIView):
 
 
 class TrendView(APIView):
-##MOTH ABC
+    permission_classes = [Viewer_Analyst_Admin]
+##MOnTH ABC-edge case
     def get(self, request):
         months = int(request.query_params.get("months", 6))
         ##edges case  24
@@ -96,3 +100,5 @@ class TrendView(APIView):
 
     #Monthly or weekly trends
 #error handling and logging for wrong data type 
+
+##insights and tagged records remaining

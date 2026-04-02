@@ -27,7 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -53,6 +55,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'users.middleware.SessionAuthMiddleware',
 ]
 
 ROOT_URLCONF = "finance_dashboard.urls"

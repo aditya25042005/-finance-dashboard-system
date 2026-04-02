@@ -8,12 +8,14 @@ from django.conf import settings
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView,ListAPIView, DestroyAPIView
 from .models import Insight
 from .serializers import InsightSerializer
-
+from users.permissions import *
 
 
 ###users only inighTs by analyst
 class MyInsightsView(ListAPIView):
     serializer_class = InsightSerializer
+    permission_classes = [Analyst_Admin]
+
 
     def get_queryset(self):
         return Insight.objects.filter(created_by=self.request.user).order_by('-created_at')
@@ -22,6 +24,7 @@ class MyInsightsView(ListAPIView):
 class InsightListCreateView(ListCreateAPIView):
     queryset = Insight.objects.all().order_by('-created_at')
     serializer_class = InsightSerializer
+    permission_classes = [Analyst_Admin]
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -30,11 +33,13 @@ class InsightListCreateView(ListCreateAPIView):
 class InsightDetailView(RetrieveAPIView):
     queryset = Insight.objects.all()
     serializer_class = InsightSerializer
+    permission_classes = [Analyst_Admin]
 
 ##delete insight only by creator
 ##later allow for admins also
 class MyInsightDeleteView(DestroyAPIView):
     serializer_class = InsightSerializer
+    permission_classes = [Analyst_Admin]
 
     def get_queryset(self):
         return Insight.objects.filter(created_by=self.request.user)

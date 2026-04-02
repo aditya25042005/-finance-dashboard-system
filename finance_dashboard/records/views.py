@@ -4,6 +4,7 @@ from .serializer import *
 from rest_framework.exceptions import NotFound, APIException
 from rest_framework.response import Response
 from users.models import User
+from users.permissions import *
 
 # Create your views here.
 
@@ -11,6 +12,7 @@ from users.models import User
 class RecordCreateAPIView(CreateAPIView):
     queryset = Record.objects.all()
     serializer_class = RecordSerializer
+    permission_classes=[Admin]
     def perform_create(self, serializer):
       try:
         ##demo
@@ -28,7 +30,9 @@ class RecordRetrieveAPIView(RetrieveAPIView):
     ##solved N+1 QUERY PROBLEM 
     queryset = Record.objects.select_related("created_by").all()
     serializer_class = RecordSerializer
-    ### do ultimate error handling
+    permission_classes=[Analyst_Admin]
+
+    ###  to do this  error handling
     
   #  http://127.0.0.1:8000/records/view/dd
    
@@ -37,8 +41,12 @@ class RecordRetrieveAPIView(RetrieveAPIView):
 
 class RecordUpdateAPIView(UpdateAPIView):
     queryset = Record.objects.all()
+    permission_classes=[Admin]
+
     def perform_update(self, serializer):
       
+
+      #mock purpose change tomorrow
       user=User.objects.get(username='adityakarn')
 
       serializer.save(updated_by=user)
@@ -49,4 +57,5 @@ class RecordUpdateAPIView(UpdateAPIView):
 class RecordDeleteAPIView(DestroyAPIView):
     queryset = Record.objects.all()
     serializer_class = RecordSerializer
+    permission_classes=[Admin]
 
