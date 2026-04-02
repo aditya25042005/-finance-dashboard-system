@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .serializers import UserSerializer
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView,UpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView,UpdateAPIView,DestroyAPIView
 
 # Create your views here.
 
@@ -45,5 +45,11 @@ class UserUpdateView(UpdateAPIView):
         serializer_class=UserSerializer
         lookup_field='username'
 
+class UserDeleteView(DestroyAPIView):
+        queryset=User.objects.all()
+        serializer_class=UserSerializer
+        lookup_field='username'
+
         
    
+   ##auth remaining
