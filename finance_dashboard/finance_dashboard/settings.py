@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-nbtu_w@pukred6c7br7^^bd-2=fq=$*(_to-z73it#k6-=5mlg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['finance-dashboard-system-wptx.onrender.com']
 
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
