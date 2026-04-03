@@ -59,7 +59,7 @@ class SessionAuthMiddleware:
             try:
                
 
-                user = User.objects.get(username='adityakarn', is_active=True)
+                user = User.objects.get(username=username, is_active=True)
                 
             except User.DoesNotExist:
                 return JsonResponse(

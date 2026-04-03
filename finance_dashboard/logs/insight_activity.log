@@ -1,0 +1,8 @@
+INFO 2026-04-04 02:03:14,478 insight_logger Insight deleted | id=10 | title=Bonus improves monthly net balance | deleted_by=
+INFO 2026-04-04 02:06:21,094 insight_logger Insight deleted | id=12 | title=Investment returns strengthen income diversification | deleted_by=adityakarn
+INFO 2026-04-04 02:11:36,239 insight_logger Insight deleted | id=1 | title=Food expense spike | deleted_by=adityakarn
+INFO 2026-04-04 02:13:25,145 insight_logger Insight deleted | id=3 | title=Salary growth observed | deleted_by=adityakarn
+INFO 2026-04-04 02:17:16,930 insight_logger Bulk insight create success | user=b | count=1
+INFO 2026-04-04 02:17:42,918 insight_logger Insight deleted | id=19 | title=f | deleted_by=b
+INFO 2026-04-04 02:24:09,459 insight_logger Bulk insight create success | user=b | count=1
+INFO 2026-04-04 02:27:27,031 insight_logger Bulk insight create success | user=a | count=1

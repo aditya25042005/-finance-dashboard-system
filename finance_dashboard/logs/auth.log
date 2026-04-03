@@ -1,0 +1,7 @@
+INFO 2026-04-04 02:00:47,176 auth_logger User created | created_by=adityakarn | username=b | role=analyst
+INFO 2026-04-04 02:01:00,346 auth_logger User created | created_by=adityakarn | username=c | role=viewer
+INFO 2026-04-04 02:01:29,681 auth_logger Login success | username=b | role=analyst
+INFO 2026-04-04 02:14:09,098 auth_logger Login success | username=b | role=analyst
+INFO 2026-04-04 02:26:31,435 auth_logger Login success | username=a | role=admin
+INFO 2026-04-04 02:29:07,349 auth_logger Login success | username=b | role=analyst
+INFO 2026-04-04 02:40:41,195 auth_logger Login success | username=c | role=viewer

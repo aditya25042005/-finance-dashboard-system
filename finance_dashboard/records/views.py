@@ -12,6 +12,11 @@ from .pagination import UserPagination
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
+import logging
+
+
+record_logger = logging.getLogger("record_logger")
+app_logger = logging.getLogger("app_logger")
 # Create your views here.
 
 
@@ -19,16 +24,27 @@ class RecordCreateAPIView(CreateAPIView):
     queryset = Record.objects.all()
     serializer_class = RecordSerializer
     permission_classes=[Admin]
+    authentication_classes = []
+
     def perform_create(self,serializer):
       try:
         ##demo
         user=User.objects.get(username=self.request.users.username)
-        serializer.save(created_by=user)
+        record=serializer.save(created_by=user)
+        record_logger.info(
+                f"Record created | id={record.id} | user={user.username} | type={record.type} | category={record.category} | amount={record.amount}"
+            )
       except IntegrityError:
+            app_logger.error(
+                f"Record creation failed بسبب database constraint | user={getattr(self.request.user, 'username', 'unknown')}"
+            )
             raise ValidationError({
                 "detail": "Record could not be created because it violates a database constraint."
             })
       except Exception as e:
+         app_logger.error(
+                f"Unexpected error while creating record | user={getattr(self.request.users, 'username', 'unknown')} | error={str(e)}"
+            )
        #  print(str(e))
          raise APIException("Something went wrong")
 
@@ -41,18 +57,17 @@ class RecordRetrieveAPIView(RetrieveAPIView):
     queryset = Record.objects.select_related("created_by").all()
     serializer_class = RecordSerializer
     permission_classes=[Analyst_Admin]
+    authentication_classes = []
 
-    ###  to do this  error handling
-    
-  #  http://127.0.0.1:8000/records/view/dd
+
    
-   # then ultimate error handling
-
 
 
 class RecordUpdateAPIView(UpdateAPIView):
     queryset = Record.objects.all()
     permission_classes=[Admin]
+    authentication_classes = []
+
     serializer_class = RecordSerializer
 
 
@@ -63,8 +78,15 @@ class RecordUpdateAPIView(UpdateAPIView):
      
       user=User.objects.get(username=self.request.users.username)
       try:
-       serializer.save(updated_by=user)
+       record=serializer.save(updated_by=user)
+       record_logger.info(
+                f"Record updated | id={record.id} | user={user.username}"
+            )
+
       except IntegrityError:
+          app_logger.error(
+                f"Record update failed due to database constraint | user={getattr(self.request.users, 'username', 'unknown')} | record_id={getattr(self.get_object(), 'id', None)}"
+            )
           raise ValidationError({
                   "detail": "Record could not be updated because it violates a database constraint."
               })
@@ -75,7 +97,12 @@ class RecordDeleteAPIView(DestroyAPIView):
     queryset = Record.objects.all()
     serializer_class = RecordSerializer
     permission_classes=[Admin]
-
+    authentication_classes = []
+    def perform_destroy(self, instance):
+        record_logger.info(
+            f"Record deleted | id={instance.id} | user={getattr(self.request.users, 'username', 'unknown')} | type={instance.type} | category={instance.category}"
+        )
+        instance.delete()
 
 
 
@@ -85,6 +112,9 @@ class RecordListAPIView(ListAPIView):
     serializer_class = RecordSerializer
     permission_classes=[Analyst_Admin]
     pagination_class = UserPagination
+    authentication_classes = []
+
+
 
 
     def get_queryset(self):
@@ -124,6 +154,10 @@ class RecordListAPIView(ListAPIView):
             raise
       
       except Exception:
+            app_logger.error(
+                f"Record list filtering failed | user={getattr(self.request.user, 'username', 'unknown')} | query_params={dict(self.request.query_params)} | error={str(e)}"
+            )
+            
             raise ValidationError({"error": "Something went wrong while filtering records."})
       
 
@@ -137,11 +171,16 @@ class RecordListAPIView(ListAPIView):
 )
 class RecordBulkCreateAPIView(APIView):
     permission_classes = [Admin]
+    authentication_classes = []
+
 
     def post(self, request):
         serializer = RecordSerializer(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save(created_by=request.user, updated_by=request.user)
+        serializer.save(created_by=request.users)
+        record_logger.info(
+                f"Bulk record create success | user={request.user.username} | count={len(serializer.data)}"
+            )
 
         return Response(
             {

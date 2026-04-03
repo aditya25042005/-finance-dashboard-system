@@ -32,6 +32,8 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 # Application definition
 
+
+
 INSTALLED_APPS = [
     "users",
     "insights",
@@ -49,6 +51,77 @@ INSTALLED_APPS = [
      
 
 ]
+
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {name} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "app_file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "logs/app.log"),
+            "formatter": "verbose",
+        },
+        "record_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "logs/record_activity.log"),
+            "formatter": "verbose",
+        },
+        "insight_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "logs/insight_activity.log"),
+            "formatter": "verbose",
+        },
+        "auth_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "logs/auth.log"),
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "app_logger": {
+            "handlers": ["app_file"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "record_logger": {
+            "handlers": ["record_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "insight_logger": {
+            "handlers": ["insight_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "auth_logger": {
+            "handlers": ["auth_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
+
+
+
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }

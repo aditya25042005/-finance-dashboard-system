@@ -7,6 +7,7 @@ class Admin(BasePermission):
     def has_permission(self, request, view):
         return (
             getattr(request, "jwt_authenticated", False)
+            
             and getattr(request.users, "role", None) == "admin"
         )
 

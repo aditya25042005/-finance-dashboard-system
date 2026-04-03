@@ -1,0 +1,4 @@
+INFO 2026-04-04 01:59:26,573 record_logger Record deleted | id=30 | user=adityakarn | type=expense | category=food
+INFO 2026-04-04 02:27:47,095 record_logger Record deleted | id=3 | user=a | type=income | category=salary
+INFO 2026-04-04 02:27:56,832 record_logger Record deleted | id=5 | user=a | type=expense | category=food
+INFO 2026-04-04 02:32:53,182 record_logger Record created | id=34 | user=b | type=income | category=string | amount=2636403.74

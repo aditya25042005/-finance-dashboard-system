@@ -14,6 +14,9 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from django.conf import settings
 from drf_spectacular.utils import extend_schema
+import logging
+auth_logger = logging.getLogger("auth_logger")
+app_logger = logging.getLogger("app_logger")
 #create user
 
 @extend_schema(
@@ -22,6 +25,7 @@ from drf_spectacular.utils import extend_schema
 )
 class UserCreateView(APIView):
     permission_classes = [Admin]
+    authentication_classes = []
 
     
     def post(self,request):
@@ -31,11 +35,19 @@ class UserCreateView(APIView):
         serializer=UserSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+            auth_logger.info(
+                    f"User created | created_by={request.users.username} | username={serializer.data['username']} | role={serializer.data['role']}"
+                )
+            
+
             return Response(serializer.data,status=201)
         else:
             return Response(serializer.errors,status=400)
       except Exception as e:
-        return Response({"error":str(e)},status=500)
+        app_logger.error(
+                f"User creation failed | requested_by={getattr(request.users, 'username', 'anonymous')} | error={str(e)}"
+            )
+        return Response({"error":"error occurred"},status=500)
       
 #list of user paginationg pending   
 class UserListView(ListAPIView):
@@ -44,6 +56,7 @@ class UserListView(ListAPIView):
     serializer_class=UserSerializer
     pagination_class = UserPagination
     permission_classes = [Admin]
+    authentication_classes= []
 
 
 
@@ -54,6 +67,7 @@ class userDetailView(RetrieveAPIView):
     serializer_class=UserSerializer
     lookup_field='username'
     permission_classes = [Admin]
+    authentication_classes = []
 
 
 # update user role
@@ -64,6 +78,13 @@ class UserUpdateView(UpdateAPIView):
         serializer_class=UserSerializer
         lookup_field='username'
         permission_classes = [Admin]
+        def perform_update(self, serializer):
+          user=serializer.save()
+       
+          auth_logger.info(
+            f"User updated | updated_by={self.request.users.username} | username={user.username}"
+        )
+      
 
 
 class UserDeleteView(DestroyAPIView):
@@ -71,6 +92,14 @@ class UserDeleteView(DestroyAPIView):
         serializer_class=UserSerializer
         lookup_field='username'
         permission_classes = [Admin]
+        authentication_classes = []
+        def perform_destroy(self, instance):
+             auth_logger.info(
+            f"User deleted | deleted_by={self.request.users.username} | username={instance.username}"
+        )
+             instance.delete()
+        
+
 
         
    
@@ -80,10 +109,12 @@ class UserDeleteView(DestroyAPIView):
     responses={200: None, 401: None}
 )
 class UserLogin(APIView):
+        
    
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
+       
 
         serializer.is_valid(raise_exception=True)
 
@@ -93,12 +124,18 @@ class UserLogin(APIView):
         user = authenticate(request, username=username, password=password)
 
         if user is None:
+            auth_logger.warning(
+                f"Login failed | username={username} | reason=invalid_credentials"
+            )
             return Response(
                 {"error": "Invalid credentials. Please try again."},
                 status=status.HTTP_401_UNAUTHORIZED
             )
         #inactive user
         if not user.is_active:
+            auth_logger.warning(
+                f"Login failed | username={username} | reason=invalid_credentials"
+            )
             return Response(
                 {"error": "This account is inactive"},
                 status=status.HTTP_403_FORBIDDEN
@@ -112,6 +149,9 @@ class UserLogin(APIView):
         }
 
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
+        auth_logger.info(
+            f"Login success | username={user.username} | role={user.role}"
+        )
        
 
         response=Response(
