@@ -57,6 +57,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -207,3 +208,29 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Finance Dashboard API",
+    "DESCRIPTION": """
+## Authentication Guide
+
+Follow the steps below to access secured endpoints:
+
+### 1. Login Credentials
+- admin: username `a`, password `2w4`
+- analyst: username `b`, password `2w4`
+- viewer: username `c`, password `2w4`
+
+### 2. Obtain Access Token
+Call the `/user/login/` endpoint with valid credentials.  
+You will receive an access token in the response.
+
+### 3. Authorize Requests
+Click the "Authorize" button in Swagger UI and enter the token in the following format:
+
+Bearer <your_access_token>
+
+### 4. Access Protected APIs
+After authorization, you can access all secured endpoints.
+""",
+}
