@@ -18,7 +18,6 @@ This project was built with **Django** and **Django REST Framework** for:
 - Python
 - Django
 - Django REST Framework
-- SQLite
 - JWT-based authentication
 - File-based logging
 
