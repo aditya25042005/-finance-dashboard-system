@@ -226,9 +226,8 @@ Call the `/user/login/` endpoint with valid credentials.
 You will receive an access token in the response.
 
 ### 3. Authorize Requests
-Click the "Authorize" button in Swagger UI and enter the token in the following format:
+Click the "Authorize" button in Swagger UI and enter the token in the cookieAuth field
 
-Bearer <your_access_token>
 
 ### 4. Access Protected APIs
 After authorization, you can access all secured endpoints.
