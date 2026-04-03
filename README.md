@@ -23,6 +23,7 @@ This project was built with **Django** and **Django REST Framework** for:
 
 ---
 
+
 # Project Structure
 
 ```text
