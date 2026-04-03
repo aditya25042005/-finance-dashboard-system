@@ -20,8 +20,6 @@ This project was built with **Django** and **Django REST Framework** for:
 - Django REST Framework
 - SQLite
 - JWT-based authentication
-- drf-spectacular / Swagger
-- Custom middleware and role-based permissions
 - File-based logging
 
 ---
