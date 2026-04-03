@@ -13,5 +13,7 @@ class Insight(models.Model):
     on_delete=models.SET_NULL,
     null=True,
     blank=True,
+    related_name="insights_created"
+
 )
     created_at = models.DateTimeField(auto_now_add=True)

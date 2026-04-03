@@ -8,8 +8,18 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView,
 from django.contrib.auth import authenticate, login
 from .permissions import *
 from rest_framework import status
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+import jwt
+from datetime import datetime, timedelta, timezone
+from django.conf import settings
+from drf_spectacular.utils import extend_schema
 #create user
+
+@extend_schema(
+    request=UserSerializer,
+    responses={201: None, 400: None}
+)
 class UserCreateView(APIView):
     permission_classes = [Admin]
 
@@ -25,7 +35,7 @@ class UserCreateView(APIView):
         else:
             return Response(serializer.errors,status=400)
       except Exception as e:
-        return Response({"error":str(e)},status=400)
+        return Response({"error":str(e)},status=500)
       
 #list of user paginationg pending   
 class UserListView(ListAPIView):
@@ -65,7 +75,10 @@ class UserDeleteView(DestroyAPIView):
         
    
    ##auth remaining
-
+@extend_schema(
+    request=LoginSerializer,
+    responses={200: None, 401: None}
+)
 class UserLogin(APIView):
    
 
@@ -81,7 +94,7 @@ class UserLogin(APIView):
 
         if user is None:
             return Response(
-                {"error": "Invalid username or password"},
+                {"error": "Invalid credentials. Please try again."},
                 status=status.HTTP_401_UNAUTHORIZED
             )
         #inactive user
@@ -90,15 +103,34 @@ class UserLogin(APIView):
                 {"error": "This account is inactive"},
                 status=status.HTTP_403_FORBIDDEN
             )
-        #i am using django's built in session authentication
-        login(request, user)
+        payload = {
+            "user_id": user.id,
+            "username": user.username,
+            "role": user.role,
+            "exp": datetime.now(timezone.utc) + timedelta(days=14),
+            "iat": datetime.now(timezone.utc),
+        }
 
-        return Response(
+        token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
+       
+
+        response=Response(
             {
-                "message": "Login successful"
+                "message": "Login successful",
+                  "access_token": token
+      
                
             },
             status=status.HTTP_200_OK
         )
+        response.set_cookie(
+            key="access_token",
+            value=token,
+            httponly=True,
+            secure=False,      # True in production with HTTPS
+            samesite="Lax",
+            max_age=14 * 24 * 60 * 60
+        )
+        return response
+        
     
-# logout view pending
